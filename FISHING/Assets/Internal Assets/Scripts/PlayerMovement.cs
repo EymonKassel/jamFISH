@@ -3,39 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-    [SerializeField]
-    private float _movementSpeed = 5f;
-    [SerializeField]
-    private float _sprintSpeedMultiplier = 2f;
-
-    private Vector2 _movement;
-
-    [SerializeField]
-    private bool _isSprinting = false;
-
+    private Vector3 _mousePosition;
+    public float MoveSpeed = 0.01f;
     private Rigidbody2D _rb;
+    private Vector2 _position = new(0f, 0f);
 
-    private void Awake() {
+    private void Start() {
         _rb = GetComponent<Rigidbody2D>();
-    }
-    private void Update() {
-        // I used "GetAxis()" instead of "GetAxisRaw()" cause I wanted to get decimal number
-        // It could be usefull for making smoothness movement
-        _movement.x = Input.GetAxis("Horizontal");
-        _movement.y = Input.GetAxis("Vertical");
     }
 
     private void FixedUpdate() {
-        Move(_sprintSpeedMultiplier);
+        if ( Input.GetMouseButton(0) ) {
+            Move();
+        }
+        if ( Input.GetMouseButtonUp(0) ) {
+            // smoothness
+        }
     }
 
-    private void Move(float sprintSpeedMultiplier = 2f) {
-        if ( Input.GetKey(KeyCode.LeftShift) ) {
-            _rb.velocity = new(_movementSpeed * _movement.x * sprintSpeedMultiplier * Time.deltaTime,
-                _movementSpeed * _movement.y * sprintSpeedMultiplier * Time.deltaTime);
-        } else {
-            _rb.velocity = new(_movementSpeed * _movement.x * Time.deltaTime,
-                _movementSpeed * _movement.y * Time.deltaTime);
-        }
+    private void Move() {
+        _mousePosition = Input.mousePosition;
+        _mousePosition = Camera.main.ScreenToWorldPoint(_mousePosition);
+        _position = Vector2.Lerp(transform.position, _mousePosition, MoveSpeed);
+        _rb.MovePosition(_position);
     }
 }
