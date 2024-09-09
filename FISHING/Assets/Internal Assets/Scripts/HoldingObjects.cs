@@ -63,13 +63,12 @@ public class HoldingObjects : MonoBehaviour {
         Debug.Log("push");
         _currentObject.AddComponent<Rigidbody2D>();
         _rb = _currentObject.GetComponent<Rigidbody2D>();
-        _rb.gravityScale = 0f;
+        _rb.gravityScale = 0.25f;
         _currentObject.transform.parent = null;
 
-        // change 0 0
         _pickable = _currentObject.GetComponent<PickableObject>();
-        _rb.velocity = new(0f, 5f);
-
+        // change later
+        _rb.velocity = Vector2.right * 20;
         _currentObject = null;
 
     }
