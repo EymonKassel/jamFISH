@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+    [SerializeField]
+    private float _roughness = 1f;
     public float moveSpeed = 5f; // Speed at which the player moves
     private Rigidbody2D _rb;
     private Vector2 velocity = Vector2.zero; // To store the player's velocity
@@ -15,11 +17,10 @@ public class PlayerMovement : MonoBehaviour {
 
     private void FixedUpdate() {
         if ( Input.GetMouseButton(0) ) {
-            // Move player towards mouse
             MoveTowardsMouse();
         } else if ( velocity.magnitude > 0.1f ) {
             // Slide effect when not holding the mouse button
-            velocity = Vector2.Lerp(velocity, Vector2.zero, 0.5f * Time.fixedDeltaTime);
+            velocity = Vector2.Lerp(velocity, Vector2.zero, _roughness * Time.fixedDeltaTime);
             _rb.MovePosition(_rb.position + velocity * Time.fixedDeltaTime);
         }
 
@@ -63,7 +64,7 @@ public class PlayerMovement : MonoBehaviour {
     private void Flip(bool isFacingRight) {
         facingRight = isFacingRight;
         Vector3 scale = transform.localScale;
-        scale.x *= -1; // Invert the X axis to flip the sprite
+        scale.x *= -1; 
         scale.y *= -1;
         transform.localScale = scale;
     }
