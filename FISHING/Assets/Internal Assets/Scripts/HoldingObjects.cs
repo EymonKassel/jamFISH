@@ -19,7 +19,6 @@ public class HoldingObjects : MonoBehaviour {
     private GameObject _pickableObject; // Object in range that can be picked up
 
     private Rigidbody2D _rb;
-    private PickableObject _pickable; // Reference to pickable object component
 
     [Header("Throw Settings")]
     [SerializeField] private float throwForce = 20f; // Force applied when throwing
@@ -78,10 +77,7 @@ public class HoldingObjects : MonoBehaviour {
     private void Throw() {
         if ( _currentObject == null ) return;
 
-        _currentObject.transform.parent = null; // Detach the object from the player
-        _currentObject.AddComponent<Rigidbody2D>(); // Add Rigidbody2D for physics
-        _rb = _currentObject.GetComponent<Rigidbody2D>();
-        _rb.gravityScale = 0.25f;
+        AddComponentsToThrownItem(_currentObject.tag);
 
         // Calculate direction to the mouse
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -96,14 +92,45 @@ public class HoldingObjects : MonoBehaviour {
         Debug.Log("Object thrown");
     }
 
-    // Detect when a pickable object enters the player's range
+    private void AddComponentsToThrownItem(string itemTag) {
+        _currentObject.transform.parent = null;
+        _currentObject.AddComponent<Rigidbody2D>();
+        _rb = _currentObject.GetComponent<Rigidbody2D>();
+        _rb.gravityScale = 0.25f;
+
+        switch (itemTag) {
+            case "TinyStone":
+                _currentObject.AddComponent<ThrownObject>();
+                _currentObject.AddComponent<TinyStone>();
+                break;
+            case "HugeStone":
+                _currentObject.AddComponent<ThrownObject>();
+                _currentObject.AddComponent<HugeStone>();
+                break;
+            case "Bait":
+                _currentObject.AddComponent<ThrownObject>();
+                _currentObject.AddComponent<Bait>();
+                break;
+            case "Diode":
+                _currentObject.AddComponent<ThrownObject>();
+                _currentObject.AddComponent<Diode>();
+                break;
+            case "QuestItem":
+                _currentObject.AddComponent<ThrownObject>();
+                _currentObject.AddComponent<QuestItem>();
+                break;
+            default:
+                Debug.Log("Thrown object is unknown");
+                break;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision) {
-        if ( collision.gameObject.layer == 10 ) { // Assuming pickable objects are on layer 10
+        if ( collision.gameObject.layer == 10 ) { 
             _pickableObject = collision.gameObject;
         }
     }
 
-    // Detect when a pickable object exits the player's range
     private void OnTriggerExit2D(Collider2D collision) {
         if ( collision.gameObject.layer == 10 ) {
             _pickableObject = null;
