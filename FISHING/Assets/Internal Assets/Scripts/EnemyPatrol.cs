@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class EnemyPatrol : MonoBehaviour {
     [SerializeField]
@@ -9,19 +8,26 @@ public class EnemyPatrol : MonoBehaviour {
     private int _targetPoint;
     [SerializeField]
     private float _patrollingSpeed = 5f;
+    [SerializeField]
+    private float _acceleration = 2f;
+    [SerializeField]
+    private float _pauseDuration = 2f;
 
     [SerializeField]
     private GameObject _player;
     [SerializeField]
     private float _followingSpeed = 5f;
     [SerializeField]
-    private float _distanceBetween = 1000f; // It's rudiment, remove later if there is time
+    private float _distanceBetween = 1000f;
 
     private float _distanse;
-
     private bool _isTriggered = false;
     private bool _isBaited = false;
     private GameObject _currentBait;
+    private bool _isWaiting = false;
+
+    private float _currentSpeed = 0f;
+    private Vector3 _lastPosition;
 
     private void Awake() {
         _player = GameObject.Find("Player");
@@ -29,6 +35,7 @@ public class EnemyPatrol : MonoBehaviour {
 
     private void Start() {
         _targetPoint = 0;
+        _lastPosition = transform.position; // Track the initial position for movement direction calculation
     }
 
     private void Update() {
@@ -37,59 +44,84 @@ public class EnemyPatrol : MonoBehaviour {
         } else {
             if ( _isTriggered ) {
                 FollowPlayer();
-
             } else {
-                Patrol();
+                if ( !_isWaiting ) {
+                    Patrol();
+                }
             }
         }
+
+        FlipBasedOnMovement();
     }
 
-    // Somehow later combine FollowBait() and FollowPlayer()
-    private void FollowBait() {
-        _distanse = Vector2.Distance(transform.position, _currentBait.transform.position);
-        Vector2 direction = _currentBait.transform.position - transform.position;
-        direction.Normalize();
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+    // Flip the enemy based on movement direction
+    private void FlipBasedOnMovement() {
+        Vector3 movementDirection = transform.position - _lastPosition;
 
-        if ( _distanse < _distanceBetween ) {
-            transform.position = Vector2.MoveTowards(transform.position, _currentBait.transform.position, _followingSpeed * Time.deltaTime);
-            transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+        // change y
+        if ( movementDirection.x > 0 ) {
+            // Moving right
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        } else if ( movementDirection.x < 0 ) {
+            // Moving left
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
 
-        // Change later ("0" and basic logic)
+        _lastPosition = transform.position; // Update last position
+    }
+
+    private void FollowBait() {
+        _distanse = Vector2.Distance(transform.position, _currentBait.transform.position);
+        Vector2 direction = ( _currentBait.transform.position - transform.position ).normalized;
+
+        if ( _distanse < _distanceBetween ) {
+            MoveWithAcceleration(direction, _followingSpeed);
+        }
+
         if ( _distanse <= 0 ) {
             Destroy(_currentBait);
         }
-
     }
+
     private void FollowPlayer() {
         _distanse = Vector2.Distance(transform.position, _player.transform.position);
-        Vector2 direction = _player.transform.position - transform.position;
-        direction.Normalize();
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Vector2 direction = ( _player.transform.position - transform.position ).normalized;
 
-        if (_distanse < _distanceBetween) {
-            transform.position = Vector2.MoveTowards(transform.position, _player.transform.position, _followingSpeed * Time.deltaTime);
-            transform.rotation = Quaternion.Euler(Vector3.forward * angle);
+        if ( _distanse < _distanceBetween ) {
+            MoveWithAcceleration(direction, _followingSpeed);
         }
     }
 
     private void Patrol() {
-        if ( transform.position == _patrolPoints[_targetPoint].position ) {
-            IncreaseTargetInt();
+        if ( Vector3.Distance(transform.position, _patrolPoints[_targetPoint].position) <= 0.1f ) {
+            StartCoroutine(WaitAtPoint());
+        } else {
+            Vector2 direction = ( _patrolPoints[_targetPoint].position - transform.position ).normalized;
+            MoveWithAcceleration(direction, _patrollingSpeed);
         }
-        transform.position = Vector3.MoveTowards(transform.position, _patrolPoints[_targetPoint].position, _patrollingSpeed * Time.deltaTime);
     }
 
-    private void IncreaseTargetInt() {
+    private IEnumerator WaitAtPoint() {
+        _isWaiting = true;
+        _currentSpeed = 0f;
+        yield return new WaitForSeconds(_pauseDuration);
+        IncreaseTargetPoint();
+        _isWaiting = false;
+    }
+
+    private void MoveWithAcceleration(Vector2 direction, float maxSpeed) {
+        _currentSpeed = Mathf.MoveTowards(_currentSpeed, maxSpeed, _acceleration * Time.deltaTime);
+        transform.position += (Vector3)( direction * _currentSpeed * Time.deltaTime );
+    }
+
+    private void IncreaseTargetPoint() {
         _targetPoint++;
         if ( _targetPoint >= _patrolPoints.Length ) {
             _targetPoint = 0;
         }
     }
 
-    // Probably needs to change to OntriggerStay2D()
-    private void OnTriggerEnter2D(Collider2D collision) {
+    private void OnTriggerStay2D(Collider2D collision) {
         if ( collision.CompareTag("Player") ) {
             _isTriggered = true;
         }
@@ -98,15 +130,14 @@ public class EnemyPatrol : MonoBehaviour {
             _currentBait = collision.gameObject;
         }
     }
+
     private void OnTriggerExit2D(Collider2D collision) {
         if ( collision.CompareTag("Player") ) {
             _isTriggered = false;
         }
         if ( collision.CompareTag("Bait") ) {
             _isBaited = false;
-            if ( _currentBait != null ) {
-                _currentBait = null;
-            }
+            _currentBait = null;
         }
     }
 }

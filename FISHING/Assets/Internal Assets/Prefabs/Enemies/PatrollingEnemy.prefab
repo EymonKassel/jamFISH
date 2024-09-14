@@ -165,7 +165,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   _targetPoint: 0
-  _patrollingSpeed: 4
+  _patrollingSpeed: 10
+  _acceleration: 2
+  _pauseDuration: 0.5
   _player: {fileID: 0}
-  _followingSpeed: 2
-  _distanceBetween: 82.6
+  _followingSpeed: 10
+  _distanceBetween: 613.8
