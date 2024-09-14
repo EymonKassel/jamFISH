@@ -14,22 +14,26 @@ public class HoldingObjects : MonoBehaviour {
     private GameObject _currentObject;
     [SerializeField]
     private GameObject _stashedObject;
+    
+    private GameObject _tempObject; 
+    private GameObject _pickableObject; 
 
-    private GameObject _tempObject; // Temporary storage for object swapping
-    private GameObject _pickableObject; // Object in range that can be picked up
-
+    [Header("Component References")]
     private Rigidbody2D _rb;
+    private AudioManager _audioManager;
 
     [Header("Throw Settings")]
-    [SerializeField] private float throwForce = 20f; // Force applied when throwing
+    [SerializeField] private float throwForce = 20f; 
 
+    private void Awake() {
+        _audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+    }
     private void Update() {
         UpdateObjectPositions();
         HandleMouseInput();
         HandleScrollInput();
     }
-
-    // Update the positions of the held and stashed objects
+   
     private void UpdateObjectPositions() {
         if ( _currentObject != null ) {
             _currentObject.transform.position = _mouthAnchor.position;
@@ -39,18 +43,16 @@ public class HoldingObjects : MonoBehaviour {
         }
     }
 
-    // Handle input for picking up, dropping, or interacting with objects
     private void HandleMouseInput() {
-        if ( Input.GetMouseButtonDown(1) ) { // Right mouse button
+        if ( Input.GetMouseButtonDown(1) ) { 
             if ( _currentObject != null ) {
-                Throw(); // Throw the object if currently holding one
+                Throw(); 
             } else if ( _pickableObject != null ) {
-                Take(); // Pick up the object if in range
+                Take(); 
             }
         }
     }
 
-    // Handle mouse scroll input for swapping objects
     private void HandleScrollInput() {
         if ( Mathf.Abs(Input.GetAxis("Mouse ScrollWheel")) > 0f ) {
             Swap();
@@ -58,38 +60,34 @@ public class HoldingObjects : MonoBehaviour {
         }
     }
 
-    // Swap the current held object with the stashed object
     private void Swap() {
         _tempObject = _stashedObject;
         _stashedObject = _currentObject;
         _currentObject = _tempObject;
         _tempObject = null;
+        _audioManager.PlaySFX(_audioManager.SpawItem);
     }
 
-    // Pick up the object
     private void Take() {
         _currentObject = _pickableObject;
         _currentObject.transform.position = _mouthAnchor.position;
-        _currentObject.transform.parent = transform; // Make the player the parent of the object
+        _currentObject.transform.parent = transform; 
+        _audioManager.PlaySFX(_audioManager.TakeItem);
     }
 
-    // Throw the object, applying force in the direction towards the mouse
     private void Throw() {
         if ( _currentObject == null ) return;
 
         AddComponentsToThrownItem(_currentObject.tag);
 
-        // Calculate direction to the mouse
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0; // Ensure z-axis is zero for 2D
+        mousePosition.z = 0; 
         Vector2 throwDirection = ( mousePosition - transform.position ).normalized;
 
-        // Apply force to throw the object in the direction of the mouse
         _rb.AddForce(throwDirection * throwForce, ForceMode2D.Impulse);
 
         _currentObject = null;
-
-        Debug.Log("Object thrown");
+        _audioManager.PlaySFX(_audioManager.DropItem);
     }
 
     private void AddComponentsToThrownItem(string itemTag) {
