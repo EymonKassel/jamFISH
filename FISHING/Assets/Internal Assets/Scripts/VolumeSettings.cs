@@ -9,6 +9,9 @@ public class VolumeSettings : MonoBehaviour {
     private Slider _musicSlider;
     [SerializeField]
     private Slider _SFXSlider;
+    private void Awake() {
+        DontDestroyOnLoad(gameObject);
+    }
     private void Start() {
         if (PlayerPrefs.HasKey("musicVolume")) {
             LoadVolume();

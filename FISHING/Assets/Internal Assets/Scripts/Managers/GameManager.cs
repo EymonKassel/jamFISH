@@ -9,20 +9,32 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     private GameObject _uiSettingsPanel;
 
-
-
     private void Awake() {
         DontDestroyOnLoad(gameObject);
     }
 
     private void Update() {
-        RestartGame();
+        HandleRestartGame();
 
         if ( Input.GetKeyDown(KeyCode.Escape) ) {
             OpenSettings();
         }
     }
-    private void RestartGame() {
+    
+    public void OpenSettings() {
+        if ( _uiSettingsPanel.activeInHierarchy ) {
+            _uiSettingsPanel.SetActive(false);
+            Time.timeScale = 1f;
+        } else {
+            _uiSettingsPanel.SetActive(true);
+            Time.timeScale = 0f;
+        }
+    }
+
+    public void LoadNextScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+    private void HandleRestartGame() {
         if ( Input.GetMouseButton(2) ) {
             _holdTimer += Time.deltaTime;
 
@@ -32,16 +44,6 @@ public class GameManager : MonoBehaviour {
             }
         } else if ( Input.GetMouseButtonUp(2) ) {
             _holdTimer = 0f;
-        }
-    }
-
-    public void OpenSettings() {
-        if ( _uiSettingsPanel.activeInHierarchy ) {
-            _uiSettingsPanel.SetActive(false);
-            Time.timeScale = 1f;
-        } else {
-            _uiSettingsPanel.SetActive(true);
-            Time.timeScale = 0f;
         }
     }
 }
