@@ -12,6 +12,7 @@ TagManager:
   - QuestItem
   - AirBubble
   - GroupOfAirBubbles
+  - AudioManager
   layers:
   - Default
   - TransparentFX
