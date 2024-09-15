@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
@@ -11,8 +12,20 @@ public class PlayerMovement : MonoBehaviour {
 
     private bool facingRight = true;
 
+    private Animator _playerAnimator;
+
     private void Start() {
         _rb = GetComponent<Rigidbody2D>();
+        _playerAnimator = GameObject.Find("Player_Fish").GetComponent<Animator>(); ;
+    }
+
+    private void Update() {
+        if ( velocity.magnitude > 0f ) {
+            _playerAnimator.SetBool("IsSwimming", true);
+        }
+        if ( velocity.magnitude < 0.1f ) {
+            _playerAnimator.SetBool("IsSwimming", false);
+        }
     }
 
     private void FixedUpdate() {
@@ -59,5 +72,6 @@ public class PlayerMovement : MonoBehaviour {
         scale.x *= -1; 
         scale.y *= -1;
         transform.localScale = scale;
+        _playerAnimator.Play("Flip");
     }
 }
