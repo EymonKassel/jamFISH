@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // Add this for scene management
 using System.Collections;
 
 public class EnemyPatrol : MonoBehaviour {
@@ -19,6 +20,9 @@ public class EnemyPatrol : MonoBehaviour {
     private float _followingSpeed = 5f;
     [SerializeField]
     private float _distanceBetween = 1000f;
+
+    [SerializeField]
+    private float _catchRange = 1f; // Adjustable range for catching the player
 
     private float _distanse;
     private bool _isTriggered = false;
@@ -44,6 +48,7 @@ public class EnemyPatrol : MonoBehaviour {
         } else {
             if ( _isTriggered ) {
                 FollowPlayer();
+                CheckCatchPlayer(); // Check if the enemy caught the player
             } else {
                 if ( !_isWaiting ) {
                     Patrol();
@@ -90,6 +95,19 @@ public class EnemyPatrol : MonoBehaviour {
         if ( _distanse < _distanceBetween ) {
             MoveWithAcceleration(direction, _followingSpeed);
         }
+    }
+
+    private void CheckCatchPlayer() {
+        float distanceToPlayer = Vector2.Distance(transform.position, _player.transform.position);
+
+        if ( distanceToPlayer <= _catchRange ) {
+            RestartScene(); // Restart the scene when enemy reaches player
+        }
+    }
+
+    private void RestartScene() {
+        // Reloads the current scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void Patrol() {
