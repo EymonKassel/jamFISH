@@ -94,9 +94,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.75, y: 1}
+  m_Offset: {x: 0, y: 1}
   serializedVersion: 2
-  m_Radius: 10
+  m_Radius: 11
 --- !u!114 &657141301965323475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,11 +113,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   _targetPoint: 0
-  _patrollingSpeed: 30
+  _patrollingSpeed: 15
   _acceleration: 10
   _pauseDuration: 0.25
   _player: {fileID: 0}
-  _followingSpeed: 30
+  _followingSpeed: 15
   _distanceBetween: 1000
   _catchRange: 1
 --- !u!1001 &2818751114305129885
@@ -179,6 +179,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7972eb20e0e637e43bc899f7562b5f51, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1688101533767851743}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7972eb20e0e637e43bc899f7562b5f51, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6340214710112666911}
   m_SourcePrefab: {fileID: 100100000, guid: 7972eb20e0e637e43bc899f7562b5f51, type: 3}
 --- !u!4 &2347657751038634614 stripped
 Transform:
@@ -211,3 +214,38 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!58 &6340214710112666911
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3161349804742275276}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 362138.7, y: 0.82171}
+  serializedVersion: 2
+  m_Radius: 1
