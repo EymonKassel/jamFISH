@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class RadioactivePoisoning : MonoBehaviour {
@@ -10,14 +11,19 @@ public class RadioactivePoisoning : MonoBehaviour {
     public float TimeRemaining;
     private Color _imageColor;
 
-    void Start() {
+    private Animator _player;
+    private void Awake() {
+        _player = GameObject.Find("Player_Fish").GetComponent<Animator>();
+    }
+
+    private void Start() {
         TimeRemaining = TotalTime; 
         _imageColor = Image.color; 
         _imageColor.a = 0f; 
         Image.color = _imageColor; 
     }
 
-    void Update() {
+    private void Update() {
         if ( TimeRemaining > 0 ) {
             TimeRemaining -= Time.deltaTime;
 
@@ -25,6 +31,15 @@ public class RadioactivePoisoning : MonoBehaviour {
             _imageColor.a = alpha;
 
             Image.color = _imageColor;
+        }
+
+        if ( TimeRemaining <= 0 ) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);  
+        }
+        if ( TimeRemaining < 2 ) {
+            PlayerMovement playerMovement = GameObject.Find("Player").GetComponent<PlayerMovement>();
+            playerMovement.enabled = false;
+            _player.SetBool("IsDead", true);
         }
     }
 }
