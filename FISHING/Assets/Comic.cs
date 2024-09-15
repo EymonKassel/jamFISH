@@ -40,8 +40,10 @@ public class Comic : MonoBehaviour {
                 views[currentViewIndex].SetActive(true);
                 HideAllFramesInPreviousView();
             } else {
-                Debug.Log("End of comic");
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                
+                    Debug.Log("End of comic");
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                
                 return;
             }
         }

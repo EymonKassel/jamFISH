@@ -10,14 +10,14 @@ public class RadioactivePoisoning : MonoBehaviour {
     public float TimeRemaining;
     private Color _imageColor;
 
-    void Start() {
+    private void Start() {
         TimeRemaining = TotalTime; 
         _imageColor = Image.color; 
         _imageColor.a = 0f; 
         Image.color = _imageColor; 
     }
 
-    void Update() {
+    private void Update() {
         if ( TimeRemaining > 0 ) {
             TimeRemaining -= Time.deltaTime;
 
