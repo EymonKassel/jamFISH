@@ -95,6 +95,7 @@ public class HoldingObjects : MonoBehaviour {
         _currentObject.AddComponent<Rigidbody2D>();
         _rb = _currentObject.GetComponent<Rigidbody2D>();
         _rb.gravityScale = 0.25f;
+        _rb.freezeRotation = true;
 
         switch (itemTag) {
             case "TinyStone":

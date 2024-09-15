@@ -72,6 +72,6 @@ public class PlayerMovement : MonoBehaviour {
         scale.x *= -1; 
         scale.y *= -1;
         transform.localScale = scale;
-        _playerAnimator.Play("Flip");
+        //_playerAnimator.Play("Flip");
     }
 }

@@ -25,5 +25,8 @@ public class ThrownObject : MonoBehaviour {
 
         _rb.velocity = Vector2.zero;
         _rb.angularVelocity = 0f;
+        
+        Destroy(GetComponent<TinyStone>());
+        Destroy(GetComponent<ThrownObject>());
     }
 }
