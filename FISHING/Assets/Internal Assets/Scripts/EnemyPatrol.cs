@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Add this for scene management
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class EnemyPatrol : MonoBehaviour {
@@ -22,7 +22,7 @@ public class EnemyPatrol : MonoBehaviour {
     private float _distanceBetween = 1000f;
 
     [SerializeField]
-    private float _catchRange = 1f; // Adjustable range for catching the player
+    private float _catchRange = 1f;
 
     private float _distanse;
     private bool _isTriggered = false;
@@ -39,7 +39,7 @@ public class EnemyPatrol : MonoBehaviour {
 
     private void Start() {
         _targetPoint = 0;
-        _lastPosition = transform.position; // Track the initial position for movement direction calculation
+        _lastPosition = transform.position;
     }
 
     private void Update() {
@@ -48,7 +48,7 @@ public class EnemyPatrol : MonoBehaviour {
         } else {
             if ( _isTriggered ) {
                 FollowPlayer();
-                CheckCatchPlayer(); // Check if the enemy caught the player
+                CheckCatchPlayer();
             } else {
                 if ( !_isWaiting ) {
                     Patrol();
@@ -59,20 +59,16 @@ public class EnemyPatrol : MonoBehaviour {
         FlipBasedOnMovement();
     }
 
-    // Flip the enemy based on movement direction
     private void FlipBasedOnMovement() {
         Vector3 movementDirection = transform.position - _lastPosition;
 
-        // change y
         if ( movementDirection.x > 0 ) {
-            // Moving right
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         } else if ( movementDirection.x < 0 ) {
-            // Moving left
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
 
-        _lastPosition = transform.position; // Update last position
+        _lastPosition = transform.position;
     }
 
     private void FollowBait() {
@@ -101,12 +97,11 @@ public class EnemyPatrol : MonoBehaviour {
         float distanceToPlayer = Vector2.Distance(transform.position, _player.transform.position);
 
         if ( distanceToPlayer <= _catchRange ) {
-            RestartScene(); // Restart the scene when enemy reaches player
+            RestartScene(); 
         }
     }
 
     private void RestartScene() {
-        // Reloads the current scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
