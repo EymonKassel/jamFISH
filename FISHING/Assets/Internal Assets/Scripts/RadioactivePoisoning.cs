@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,6 +13,8 @@ public class RadioactivePoisoning : MonoBehaviour {
     private Color _imageColor;
 
     private Animator _player;
+
+    public TextMeshPro Text;
     private void Awake() {
         _player = GameObject.Find("Player_Fish").GetComponent<Animator>();
     }
@@ -31,6 +34,8 @@ public class RadioactivePoisoning : MonoBehaviour {
             _imageColor.a = alpha;
 
             Image.color = _imageColor;
+
+            Text.text = TimeRemaining.ToString("0");
         }
 
         if ( TimeRemaining <= 0 ) {
